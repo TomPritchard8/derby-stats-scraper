@@ -90,6 +90,7 @@ foreach ($statbook in $statbooks)
 		if ($teamPenaltyData.ContainsKey($skaterNumber))
 		{		
 			$skaterPenaltyHashtable = $teamPenaltyData.Get_Item($skaterNumber);
+			$skaterPenaltyHashtable.'Mis' += $gamePenalties[0];
 			$skaterPenaltyHashtable.'HiB' += $gamePenalties[1];
 			$skaterPenaltyHashtable.'BaB' += $gamePenalties[2];
 			$skaterPenaltyHashtable.'LoB' += $gamePenalties[3];
@@ -110,6 +111,7 @@ foreach ($statbook in $statbooks)
 		else # Initialize if this is the first time we've seen the skater listed
 		{			
 			$newSkaterPenaltyHashtable = @{			
+				'Mis' = $gamePenalties[0];
 				'HiB' = $gamePenalties[1];
 				'BaB' = $gamePenalties[2];
 				'LoB' = $gamePenalties[3];
@@ -139,9 +141,11 @@ $objExcel.quit();
 
 # Show something for all our work
 $teamPenaltyData.GetEnumerator() | Select-Object -Property Name, @{Name="JTot";Expression={$_.Value.JTot}}, @{Name="PTot";Expression={$_.Value.PTot}}, 
-@{Name="PenPJ";Expression={[math]::Round(($_.Value.PTot / $_.Value.JTot),2)}}, @{Name="HiB";Expression={$_.Value.HiB}}, 
+@{Name="PenPJ";Expression={[math]::Round(($_.Value.PTot / $_.Value.JTot),2)}},
+@{Name="Mis";Expression={$_.Value.Mis}}, @{Name="HiB";Expression={$_.Value.HiB}}, 
 @{Name="BaB";Expression={$_.Value.BaB}}, @{Name="LoB";Expression={$_.Value.LoB}}, 
 @{Name="LeB";Expression={$_.Value.LeB}}, @{Name="For";Expression={$_.Value.FAr}}, 
+@{Name="HeB";Expression={$_.Value.HeB}}, @{Name="MPB";Expression={$_.Value.MPB}}, 
 @{Name="ICo";Expression={$_.Value.ICo}}, @{Name="Dir";Expression={$_.Value.Drn}},
 @{Name="IPo";Expression={$_.Value.IPo}}, @{Name="Cut";Expression={$_.Value.Cut}}, 
 @{Name="Int";Expression={$_.Value.Int}}, @{Name="IPr";Expression={$_.Value.IPr}} | Sort-Object -Property PenPJ -descending | Format-Table *
@@ -149,10 +153,12 @@ $teamPenaltyData.GetEnumerator() | Select-Object -Property Name, @{Name="JTot";E
 # Export the results to CSV too
 $outputPath = ".\" + $team + "PenaltySummary" + ".csv"
 $teamPenaltyData.GetEnumerator() | Select-Object -Property Name, @{Name="JTot";Expression={$_.Value.JTot}}, @{Name="PTot";Expression={$_.Value.PTot}}, 
-@{Name="PenPJ";Expression={[math]::Round(($_.Value.PTot / $_.Value.JTot),3)}}, @{Name="HiB";Expression={$_.Value.HiB}}, 
+@{Name="PenPJ";Expression={[math]::Round(($_.Value.PTot / $_.Value.JTot),3)}},
+@{Name="Mis";Expression={$_.Value.Mis}}, @{Name="HiB";Expression={$_.Value.HiB}}, 
 @{Name="BaB";Expression={$_.Value.BaB}}, @{Name="LoB";Expression={$_.Value.LoB}}, 
 @{Name="LeB";Expression={$_.Value.LeB}}, @{Name="For";Expression={$_.Value.FAr}}, 
+@{Name="HeB";Expression={$_.Value.HeB}}, @{Name="MPB";Expression={$_.Value.MPB}}, 
 @{Name="ICo";Expression={$_.Value.ICo}}, @{Name="Dir";Expression={$_.Value.Drn}},
-@{Name="IPo";Expression={$_.Value.IPo}}, @{Name="Cut";Expression={$_.Value.Cut}}, 
+@{Name="IPo";Expression={$_.Value.IPo}}, @{Name="Cut";Expression={$_.Value.Cut}},  
 @{Name="Int";Expression={$_.Value.Int}}, @{Name="IPr";Expression={$_.Value.IPr}} | Sort-Object -Property PenPJ -descending | export-csv -Path $outputPath -NoTypeInformation
 Write-Host "Write output to $outputPath";
